@@ -1,0 +1,27 @@
+Table dim_customer{
+  customer_key int [pk]
+  customer_name text 
+  customer_category_name text
+}
+
+Table dim_product {
+  product_key int [pk]
+  product_name text
+  brand_name text 
+  color_name text
+  supplier_name text
+}
+
+
+Table fact_sales_order_line{
+  sales_order_line_key int [pk]
+  sales_order_key text
+  product_key int [ref: > dim_product.product_key]
+  customer_key int [ref: > dim_customer.customer_key]
+  quantity numeric
+  unit_price numeric
+  gross_amount numeric
+  tax_rate numeric
+  tax_amount numeric
+  net_mount numeric
+}
