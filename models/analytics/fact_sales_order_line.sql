@@ -62,8 +62,6 @@ FROM fact_sales_order_line__cast_type
   , fact_line.picked_quantity
   , fact_header.order_date
   , fact_header.expected_delivery_date
-  , COALESCE(fact_header.is_undersupply_backordered, 'Undefined') AS is_undersupply_backordered
-  , fact_line.package_type_key
   , FARM_FINGERPRINT(CONCAT(COALESCE(fact_header.is_undersupply_backordered, 'Undefined'), ',', fact_line.package_type_key)) AS sales_order_line_indicator_key
   , COALESCE(fact_header.number_of_customer_purchase, 0) AS number_of_customer_purchase
 FROM fact_sales_order_line__calculate_measure AS fact_line
