@@ -13,6 +13,7 @@ WITH fact_sales_order__source AS(
     , order_date
     , expected_delivery_date
     , customer_purchase_order_number AS number_of_customer_purchase
+    , is_undersupply_backordered as is_undersupply_backordered_boolean
   FROM fact_sales_order__source
 )
 
@@ -26,8 +27,22 @@ WITH fact_sales_order__source AS(
     , CAST(order_date AS DATE) AS order_date
     , CAST(expected_delivery_date AS DATE) AS expected_delivery_date
     , CAST(number_of_customer_purchase AS INTEGER) AS number_of_customer_purchase
+    , CAST(is_undersupply_backordered_boolean AS BOOLEAN) AS is_undersupply_backordered_boolean
   FROM fact_sales_order__rename_column
 ) 
+
+, fact_sales_order__convert_boolean AS(
+  SELECT
+    *
+    , CASE 
+      WHEN is_undersupply_backordered_boolean IS TRUE THEN 'Undersupply Backordered'
+      WHEN is_undersupply_backordered_boolean IS FALSE THEN 'Not Undersupply Backordered'
+      WHEN is_undersupply_backordered_boolean IS NULL THEN 'Undefined'
+      ELSE 'Invalid' END
+     AS is_undersupply_backordered
+  FROM fact_sales_order__cast_type
+
+)
 
 SELECT 
   sales_order_key
@@ -38,4 +53,5 @@ SELECT
   , order_date
   , expected_delivery_date
   , number_of_customer_purchase
-FROM fact_sales_order__cast_type
+  , is_undersupply_backordered
+FROM fact_sales_order__convert_boolean
